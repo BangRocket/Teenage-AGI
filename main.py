@@ -11,7 +11,7 @@ AGENT_NAME = os.getenv("AGENT_NAME", "my-agent")
 agent = Agent(AGENT_NAME)
 
 # Creates Pinecone Index
-agent.createIndex()
+agent.memory.createIndex()
 
 print("Talk to the AI!")
 
