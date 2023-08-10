@@ -2,8 +2,8 @@ import openai
 import sys
 import yaml
 import nltk
+import numpy as np
 from langchain.text_splitter import NLTKTextSplitter
-sys.path.append('extended/')
 from deeplake.core.vectorstore import VectorStore
 from envkeys import OPENAI_MODEL, OPENAI_API_KEY, ACTIVELOOP_KEY, ACTIVELOOP_TOKEN, ACTIVELOOP_USER, AGENT_NAME
 from prompt import prompts, generate
@@ -65,7 +65,8 @@ class Memory():
 					{'name': 'metadata', 'htype': 'text'},				 
 					{'name': 'text', 'htype': 'text'}
 					],
-			overwrite=True
+			overwrite=False,
+			num_workers=5
 		)
 		# dimension = 1536``
 		# metric = "cosine"
@@ -99,12 +100,19 @@ class Memory():
 			pass
 
 		vector = get_ada_embedding(new_thought)
+
+		vector=[vector]
+		id=[f"thought-{self.thought_id_count}"]
+		type=[thought_type]
+		metadata=[source]
+		text=[new_thought]
+
 		upsert_response = self.memory.add(
 			embedding=vector,
-			id=f"thought-{self.thought_id_count}", 
-			type=thought_type,
-			metadata=source,
-			text=new_thought
+			id=id, 
+			type=type,
+			metadata=metadata,
+			text=text
 			)
 		self.thought_id_count += 1
 
